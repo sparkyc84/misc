@@ -12,8 +12,8 @@ timestamp=$(date +%Y-%m-%d--%H-%M-%S)
 removal_dirs=$(find $backup_path -mtime +30 -type d | grep -P "^$backup_path/[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 rm -rf $removal_dirs
 # create new backup
-mkdir -p ~/$backup_path/$date/
-filename=~/$backup_path/$date/projects-wp-db-$timestamp.sql
+mkdir -p $backup_path/$date/
+filename=$backup_path/$date/projects-wp-db-$timestamp.sql
 wp db export $filename  --path=$wp_path --add-drop-table
 gzip $filename
 # run minor updates to WordPress, and upgrade the database
