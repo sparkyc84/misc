@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH=/usr/local/bin:$PATH
+export PATH
 wp_path=/var/www/html
 backup_path=~/wp-backups
 themes=0
