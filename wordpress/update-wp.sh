@@ -117,6 +117,23 @@ if ! [ -x "$(command -v update-wp)" ] && [ "${silent}" -eq "0" ]; then
       ;;
   esac
 fi
+if ! [ -x "$(command -v wp)" ]; then
+    echo -e "${blue}Info:${reset} Can't find wp-cli, trying to install."
+  cd ~/
+  if ! curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; then
+    echo -e "${red}Error:${reset} failed to download wp-cli  Do you have write permissions to the current directory?"
+    exit 1
+  fi
+  if ! chmod +x wp-cli.phar; then
+    echo -e "${red}Error:${reset} failed to make wp-cli executable."
+    exit 1
+  fi
+  echo -e "${yellow}Warning:${reset} About to try to copy wp-cli to /user/local/bin/wp -- this will prompt for your sudo password."
+  if ! sudo mv wp-cli.phar /usr/local/bin/wp; then
+    echo -e "${red}Error:${reset} failed to install wp-cli."
+    exit 1
+  fi
+fi
 response=
 crons=`crontab -l | grep \`which update-wp\` -c`
 if [ "${crons}" -eq "0" ]  && [ "${silent}" -eq "0" ]; then
@@ -159,24 +176,6 @@ if [ "${crons}" -eq "0" ]  && [ "${silent}" -eq "0" ]; then
       # do nothing
       ;;
   esac
-
-fi
-if ! [ -x "$(command -v wp)" ]; then
-    echo -e "${blue}Info:${reset} Can't find wp-cli, trying to install."
-  cd ~/
-  if ! curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; then
-    echo -e "${red}Error:${reset} failed to download wp-cli  Do you have write permissions to the current directory?"
-    exit 1
-  fi
-  if ! chmod +x wp-cli.phar; then
-    echo -e "${red}Error:${reset} failed to make wp-cli executable."
-    exit 1
-  fi
-  echo -e "${yellow}Warning:${reset} About to try to copy wp-cli to /user/local/bin/wp -- this will prompt for your sudo password."
-  if ! sudo mv wp-cli.phar /usr/local/bin/wp; then
-    echo -e "${red}Error:${reset} failed to install wp-cli."
-    exit 1
-  fi
 fi
 if !  wp core is-installed --path=$wp_path ; then
   echo -e "${red}Error:${reset} Could not find a WordPress install at ${wp_path}."
@@ -200,7 +199,7 @@ else
     echo -e "${green}Success:${reset} Deleted old backup files ${removal_dirs}."
   fi
 fi
-filename=$backup_path/$date/projects-wp-db-$timestamp.sql
+filename=$backup_path/$date/${HOSTNAME}${wp_path////_}-wp-db-$timestamp.sql
 wp db export $filename  --path=$wp_path --add-drop-table
 if ! gzip $filename; then
   echo -e "${yellow}Warning:${reset} Could not compress the backup file. Make sure you don't disk space."
