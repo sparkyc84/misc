@@ -104,7 +104,7 @@ ${bold}OPTIONS${reset}
         exit 1
       fi
       echo -e "${green}Success:${reset} got the script from the server."
-      which update-wp
+      which update-wp > /dev/null 2>&1
       if [ "$?" -eq "0" ]; then
         destination=`which update-wp`
       else
