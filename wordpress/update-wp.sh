@@ -145,12 +145,12 @@ ${bold}OPTIONS${reset}
       if [ ! "$?" -eq "0" ]; then
         echo "${blue}Info${reset}: Could not auto-update - attempting to use sudo. You will be prompted for your password"
         sudo mv ${tempfile} ${destination}
-        if [ "$?" -eq "0" ]; then
-          echo -e "${green}Success:${reset} Script has been updated on second attempt."
-          exit 0
+        if [ ! "$?" -eq "0" ]; then
+          echo -e "${red}Error:${reset} Could not complete self-update process."
+          rm ${tempfile}
         fi
-        echo -e "${red}Error:${reset} Could not complete self-update process."
-        rm ${tempfile}
+        echo -e "${green}Success:${reset} Script has been updated on second attempt."
+        exit 0
         exit 1
         fi
         echo -e "${green}Success:${reset} Script has been updated."
