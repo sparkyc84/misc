@@ -34,8 +34,10 @@ ${bold}OPTIONS${reset}
 	Attempt to download and install theme updates.
     --plugins
 	Attempt to download and install plugin updates.
+    --self-update
+        Attempt to download an updated version of this script and overwrite this script with it.
     --silent
-        Do not raise any promtps, just accept defaults.
+        Do not raise any prompts, just accept defaults.
 "
       exit
       ;;
@@ -92,15 +94,76 @@ ${bold}OPTIONS${reset}
     --silent)       # takes an option argument; ensure it has been specified.
       silent=1
       ;;
+    --self-update)       # takes an option argument; ensure it has been specified.
+      updated=`wget -qO- https://raw.githubusercontent.com/sparkyc84/misc/master/wordpress/update-wp.sh`
+      if [ ! "$?" -eq "0" ]; then
+        echo -e "${red}Error:${reset} Could not fetch from the server. Could not check update."
+      fi
+      if [ -z "${updated}" ]; then
+        echo -e "${blue}Info:${reset} The downloaded script seems to be blank. Exiting"
+        exit 1
+      fi
+      echo -e "${green}Success:${reset} got the script from the server."
+      which update-wp
+      if [ "$?" -eq "0" ]; then
+        destination=`which update-wp`
+      else
+        destination="$0"
+      fi
+      if [ "$?" -eq "0" ]; then
+        echo -e "${blue}Info:${reset} the script has not changed - no need to update."
+        exit 0
+      fi
+      read -e -r -p "${yellow}Question:${reset} Do you want to see a copy of the new script before installing?
+[y/N]:" response
+      case "$response" in
+        [yY][eE][sS]|[yY])
+          response=
+          echo "${updated}"
+          read -e -r -p "${yellow}Question:${reset} Do you still want to update this file to "${destination}"?
+[y/N]:" response
+          case "$response" in
+            [yY][eE][sS]|[yY])
+              ;;
+            *)
+              echo "${blue}Info${reset}: Update aborted. Exiting."
+              exit 1
+          esac
+          ;;
+          *)
+          ;;
+      esac
+      echo "$updated" | diff -q $destination - > /dev/null 2>&1
+      tempfile=`mktemp /tmp/update-wp.update.XXXXXX`
+      echo "${updated}" > ${tempfile}
+      if [ ! "$?" -eq "0" ]; then
+        echo -e "${red}Error:${reset} Could not write updates to file."
+        exit 1
+      fi
+      chmod +x ${tempfile}
+      mv ${tempfile} ${destination}
+      if [ ! "$?" -eq "0" ]; then
+        echo "${blue}Info${reset}: Could not auto-update - attempting to use sudo. You will be prompted for your password"
+        sudo mv ${tempfile} ${destination}
+        if [ "$?" -eq "0" ]; then
+          break 2
+        fi
+        echo -e "${red}Error:${reset} Could not complete self-update process."
+        rm ${tempfile}
+        exit 1
+        fi
+        echo -e "${green}Success:${reset} Script has been updated."
+      exit 0
+      ;;
     -?*)
       printf "${yellow}Warn${reset}: unknown option (ignored): %s\n" '$1' >&2
       ;;
     *)               # default case: no more options, so break out of the loop.
       break
   esac
-
   shift
 done
+response=
 if ! [ -x "$(command -v update-wp)" ] && [ "${silent}" -eq "0" ]; then
   read -e -r -p "${yellow}Warning:${reset} This script (update-wp) does not appear to be installed in /usr/local/bin. Would you like me to try to add it there (will prompt for sudo password)?
 [y/N]:" response
