@@ -146,15 +146,16 @@ ${bold}OPTIONS${reset}
         echo "${blue}Info${reset}: Could not auto-update - attempting to use sudo. You will be prompted for your password"
         sudo mv ${tempfile} ${destination}
         if [ "$?" -eq "0" ]; then
-          break 2
+          echo -e "${green}Success:${reset} Script has been updated on second attempt."
+          exit 0
         fi
         echo -e "${red}Error:${reset} Could not complete self-update process."
         rm ${tempfile}
         exit 1
         fi
         echo -e "${green}Success:${reset} Script has been updated."
-      exit 0
-      ;;
+        exit 0
+        ;;
     -?*)
       printf "${yellow}Warn${reset}: unknown option (ignored): %s\n" '$1' >&2
       ;;
