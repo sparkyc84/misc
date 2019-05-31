@@ -110,6 +110,7 @@ ${bold}OPTIONS${reset}
       else
         destination="$0"
       fi
+      echo "$updated" | diff -q $destination - > /dev/null 2>&1
       if [ "$?" -eq "0" ]; then
         echo -e "${blue}Info:${reset} the script has not changed - no need to update."
         exit 0
@@ -133,7 +134,6 @@ ${bold}OPTIONS${reset}
           *)
           ;;
       esac
-      echo "$updated" | diff -q $destination - > /dev/null 2>&1
       tempfile=`mktemp /tmp/update-wp.update.XXXXXX`
       echo "${updated}" > ${tempfile}
       if [ ! "$?" -eq "0" ]; then
