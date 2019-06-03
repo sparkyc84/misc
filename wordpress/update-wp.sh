@@ -59,7 +59,7 @@ ${bold}OPTIONS${reset}
       ;;
     --wp_path)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
-        file=$2
+        wp_path=$2
         shift
       else
         die "${red}Error${reset}: '--path_env' requires a non-empty option argument."
@@ -73,7 +73,7 @@ ${bold}OPTIONS${reset}
       ;;
     --backup_path)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
-        file=$2
+        backup_path=$2
         shift
       else
         die "${red}Error${reset}: '--backup_path' requires a non-empty option argument."
