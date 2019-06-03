@@ -7,7 +7,7 @@ backup_path=~/wp-backups
 themes=0
 plugins=0
 silent=0
-path_env=
+path_env=$PATH
 red=`tput setaf 1`
 green=`tput setaf 2`
 yellow=`tput setaf 3`
@@ -44,8 +44,10 @@ ${bold}OPTIONS${reset}
     --path_env)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
         path_env=$2
-        export PATH=$path_env:$PATH
-        shift
+        if [ ! ${path_env} -eq $PATH ]; then
+          export PATH=$path_env:$PATH
+        fi
+      shift
       else
         echo "${red}Error${reset}: '--path_env' requires a non-empty option argument."
         exit 1
@@ -53,7 +55,9 @@ ${bold}OPTIONS${reset}
       ;;
     --path_env=?*)
       path_env=${1#*=} # delete everything up to "=" and assign the remainder.
-      export PATH=$path_env:$PATH
+      if [ ! ${path_env} -eq $PATH ]; then
+        export PATH=$path_env:$PATH
+      fi
       ;;
     --path_env=)         # handle the case of an empty --file=
       echo "${red}Error${reset}: '--path_env' requires a non-empty option argument."
