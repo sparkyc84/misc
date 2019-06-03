@@ -47,7 +47,8 @@ ${bold}OPTIONS${reset}
         export PATH=$path_env:$PATH
         shift
       else
-        die "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+        echo "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+        exit 1
       fi
       ;;
     --path_env=?*)
@@ -55,35 +56,40 @@ ${bold}OPTIONS${reset}
       export PATH=$path_env:$PATH
       ;;
     --path_env=)         # handle the case of an empty --file=
-      die "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+      echo "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+      exit 1
       ;;
     --wp_path)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
         wp_path=$2
         shift
       else
-        die "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+        echo "${red}Error${reset}: '--path_env' requires a non-empty option argument."
+        exit 1
       fi
       ;;
     --wp_path=?*)
-      file=${1#*=} # delete everything up to "=" and assign the remainder.
+      wp_path=${1#*=} # delete everything up to "=" and assign the remainder.
       ;;
     --wp_path=)         # handle the case of an empty --file=
-        die "${red}Error${reset}: '--wp_path' requires a non-empty option argument."
+        echo "${red}Error${reset}: '--wp_path' requires a non-empty option argument."
+        exit 1
       ;;
     --backup_path)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
         backup_path=$2
         shift
       else
-        die "${red}Error${reset}: '--backup_path' requires a non-empty option argument."
+        echo "${red}Error${reset}: '--backup_path' requires a non-empty option argument."
+        exit 1
       fi
       ;;
     --backup_path=?*)
-      file=${1#*=} # delete everything up to "=" and assign the remainder.
+      backup_path=${1#*=} # delete everything up to "=" and assign the remainder.
       ;;
     --backup_path=)         # handle the case of an empty --file=
-        die "${red}Error${reset}: '--backup_path' requires a non-empty option argument."
+        echo "${red}Error${reset}: '--backup_path' requires a non-empty option argument."
+        exit 1
       ;;
     --themes)       # takes an option argument; ensure it has been specified.
       themes=1
