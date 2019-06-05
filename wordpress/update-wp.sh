@@ -44,7 +44,7 @@ ${bold}OPTIONS${reset}
     --path_env)       # takes an option argument; ensure it has been specified.
       if [ "$2" ]; then
         path_env=$2
-        if [ ! ${path_env} -eq $PATH ]; then
+        if [ ! "${path_env}" == "$PATH" ]; then
           export PATH=$path_env:$PATH
         fi
       shift
@@ -55,7 +55,7 @@ ${bold}OPTIONS${reset}
       ;;
     --path_env=?*)
       path_env=${1#*=} # delete everything up to "=" and assign the remainder.
-      if [ ! ${path_env} -eq $PATH ]; then
+      if [ ! "${path_env}" == "${PATH}" ]; then
         export PATH=$path_env:$PATH
       fi
       ;;
