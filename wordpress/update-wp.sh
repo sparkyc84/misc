@@ -264,7 +264,7 @@ else
   echo -e "${green}Success:${reset} Created backup directory at ${backup_path}."
 fi
 removal_dirs=$(find $backup_path -mtime +30 -type d | grep -P "^$backup_path/[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-if [${removal_dirs// } -eq ""]; then 
+if [ ${removal_dirs// } == ""]; then 
   echo -e "${blue}Info:${reset} Could not find any old backup files to delete."
 else
   if ! rm -rf $removal_dirs; then
