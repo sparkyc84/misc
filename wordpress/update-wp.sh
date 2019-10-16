@@ -277,8 +277,8 @@ filename=$backup_path/$date/${HOSTNAME}${wp_path////_}-wp-db-$timestamp.sql
 wp db export $filename  --path=$wp_path --add-drop-table
 if ! gzip $filename; then
   echo -e "${yellow}Warning:${reset} Could not compress the backup file. Make sure you don't disk space."
-wp core update --minor --path=$wp_path
 fi
+wp core update --minor --path=$wp_path
 if  wp core is-installed --path=$wp_path --network; then
     echo -e "${blue}Info:${reset} WordPress seemes to be a network install - updating the database across the network"
   wp core update-db --path=$wp_path --network
